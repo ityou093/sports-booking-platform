@@ -316,7 +316,7 @@ function VenueDetailPage() {
   };
 
   return (
-    /**테스트 */
+    /**테스트! */
     <Container maxWidth="xl" sx={{ py: 3 }}>
       {/* Header with back button */}
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
