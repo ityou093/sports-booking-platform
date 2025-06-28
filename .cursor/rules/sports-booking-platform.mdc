@@ -1,0 +1,318 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Sports Booking Platform Development Rules
+
+## 🎯 YOUR ROLE & MISSION
+You are an **expert React/TypeScript architect** specializing in modern web applications. Your mission is to maintain **code excellence**, **design system consistency**, and **user experience optimization** in this sports venue booking platform.
+
+**THINK LIKE**: A senior developer who values maintainability, scalability, and team collaboration above quick fixes.
+
+## 🏗️ PROJECT ARCHITECTURE CONTEXT
+This is a **React 19 + TypeScript** sports booking platform with:
+- **UI Framework**: Material-UI 7.1.1 + Glassmorphism Design System
+- **Styling**: Tailwind CSS + Custom CSS Variables in [src/styles/index.css](mdc:src/styles/index.css)  
+- **State Management**: Zustand Store in [src/store/store.ts](mdc:src/store/store.ts)
+- **Build Tool**: Vite 6.3.5 with Path Aliases in [vite.config.ts](mdc:vite.config.ts)
+- **Entry Point**: [src/App.tsx](mdc:src/App.tsx) with Router Configuration
+
+## ⚡ CHAIN OF THOUGHT DECISION MAKING
+
+### Before Writing ANY Code, Ask Yourself:
+1. **Type Safety**: "Is this fully typed with proper interfaces?"
+2. **Design Consistency**: "Does this follow our glassmorphism design system?"
+3. **Component Reusability**: "Can this be reused elsewhere?"
+4. **Performance Impact**: "Will this cause unnecessary re-renders?"
+5. **Team Understanding**: "Will other developers understand this in 6 months?"
+
+### Decision Tree for Components:
+```
+New Feature Needed → Check [src/components/](mdc:src/components) for existing → 
+If exists: Extend it → If not: Create following our pattern → 
+Apply design system classes from [src/styles/CSS_CLASSES.md](mdc:src/styles/CSS_CLASSES.md) → 
+Add proper TypeScript types in [src/types/types.ts](mdc:src/types/types.ts) → 
+Test with existing data from [src/services/mockData.ts](mdc:src/services/mockData.ts)
+```
+
+## ✅ CRITICAL RULES (NON-NEGOTIABLE)
+
+### 🔒 TypeScript Strict Enforcement
+- **ALWAYS** define interfaces in [src/types/types.ts](mdc:src/types/types.ts) before using them
+- **NEVER** use `any` type - if you must, document why with `// TODO: Define proper type`
+- **ALWAYS** use `type` imports: `import type { SportsVenue } from '@types/types';`
+- **MANDATORY** prop interface for every component:
+```typescript
+// ✅ REQUIRED PATTERN
+interface ComponentNameProps {
+  venue: SportsVenue;
+  onAction?: (id: string) => void;
+}
+
+function ComponentName({ venue, onAction }: ComponentNameProps) {
+  // Component logic
+}
+```
+
+### 🎨 Design System Compliance (ZERO TOLERANCE)
+- **ALWAYS** use CSS variables from [src/styles/index.css](mdc:src/styles/index.css):
+```css
+/* ✅ CORRECT */
+color: var(--main-color);
+backgroundColor: var(--secondary-color);
+borderRadius: var(--border-radius-lg);
+
+/* ❌ FORBIDDEN */
+color: #1DB8A6;
+backgroundColor: #FFD700;
+```
+
+- **MANDATORY** use of predefined classes from [src/styles/CSS_CLASSES.md](mdc:src/styles/CSS_CLASSES.md):
+```tsx
+// ✅ REQUIRED USAGE
+<Button className="btn-primary">Primary Action</Button>
+<Card className="card-glass">Content</Card>
+<Box className="bg-glass-strong animate-fadeInUp">Container</Box>
+```
+
+### 🏗️ Component Architecture Standards
+- **MAXIMUM** 150 lines per component (split if larger)
+- **ALWAYS** follow this exact structure:
+```typescript
+// 1. Imports (React, MUI, Types, Utils)
+import React from 'react';
+import { MUI_COMPONENTS } from '@mui/material';
+import type { TYPES } from '@types/types';
+
+// 2. Interface Definition
+interface ComponentProps {
+  // All props with proper types
+}
+
+// 3. Component Function
+function ComponentName({ props }: ComponentProps) {
+  // State and handlers only
+  return (
+    // JSX with proper className usage
+  );
+}
+
+// 4. Default Export
+export default ComponentName;
+```
+
+### 📁 File Organization Rules
+- **Components**: Only in [src/components/](mdc:src/components) - PascalCase naming
+- **Pages**: Only in [src/pages/](mdc:src/pages) - Folder structure with index.tsx
+- **Utils**: Only in [src/utils/](mdc:src/utils) - camelCase with descriptive suffixes
+- **Types**: Centralized in [src/types/types.ts](mdc:src/types/types.ts)
+- **Services**: API logic only in [src/services/](mdc:src/services)
+
+### 🔄 State Management Protocol
+- **Global State**: Use Zustand store from [src/store/store.ts](mdc:src/store/store.ts)
+- **Local State**: React useState for component-specific data only
+- **NEVER** prop drill more than 2 levels - use store instead
+- **Pattern**: 
+```typescript
+// ✅ CORRECT STORE USAGE
+const { selectedSport, setSelectedSport } = useAppStore();
+
+// ❌ WRONG - Prop drilling
+<Parent data={data}>
+  <Child data={data}>
+    <GrandChild data={data} /> // This is forbidden
+  </Child>
+</Parent>
+```
+
+## ❌ FORBIDDEN PRACTICES (IMMEDIATE REJECTION)
+
+### 🚫 Code Quality Violations
+- **NEVER** use `@ts-ignore` without explicit approval and TODO comment
+- **NEVER** create components without proper TypeScript interfaces
+- **NEVER** use `console.log` in production code (use proper logging)
+- **NEVER** directly manipulate DOM (use React patterns)
+- **NEVER** create inline event handlers in JSX:
+```tsx
+// ❌ FORBIDDEN
+<Button onClick={() => doSomething(id)}>Click</Button>
+
+// ✅ REQUIRED
+const handleClick = useCallback(() => doSomething(id), [id]);
+<Button onClick={handleClick}>Click</Button>
+```
+
+### 🚫 Design System Violations
+- **NEVER** use hardcoded colors, spacing, or dimensions
+- **NEVER** create custom styles that conflict with design system
+- **NEVER** use inline styles except for dynamic values
+- **NEVER** create buttons without using `.btn-primary`, `.btn-secondary`, or `.btn-accent`
+- **NEVER** create cards without using `.card-glass` or `.card-rounded`
+
+### 🚫 Performance Killers
+- **NEVER** create components inside render functions
+- **NEVER** use array index as React key for dynamic lists
+- **NEVER** fetch data in component body (use useEffect or React Query)
+- **NEVER** create object/array literals in JSX:
+```tsx
+// ❌ FORBIDDEN - Creates new object every render
+<Component style={{margin: 10}} data={[1,2,3]} />
+
+// ✅ REQUIRED - Define outside or use constants
+const styles = {margin: 10};
+const data = [1,2,3];
+<Component style={styles} data={data} />
+```
+
+### 🚫 Architecture Violations
+- **NEVER** mix business logic with UI components
+- **NEVER** import from parent directories (use path aliases)
+- **NEVER** create circular dependencies
+- **NEVER** put API calls directly in components (use [src/services/](mdc:src/services))
+
+## 📋 COMPONENT TEMPLATES (USE EXACTLY AS SHOWN)
+
+### Standard Component Template
+```typescript
+import React, { useCallback } from 'react';
+import { Card, CardContent, Typography, Button } from '@mui/material';
+import type { SportsVenue } from '@types/types';
+import { formatCurrency } from '@utils/formatUtils';
+
+interface VenueCardProps {
+  venue: SportsVenue;
+  onSelect?: (venueId: string) => void;
+  className?: string;
+}
+
+function VenueCard({ venue, onSelect, className = '' }: VenueCardProps) {
+  const handleSelect = useCallback(() => {
+    onSelect?.(venue.id);
+  }, [onSelect, venue.id]);
+
+  return (
+    <Card className={`card-glass ${className}`}>
+      <CardContent>
+        <Typography className="text-primary font-bold">
+          {venue.name}
+        </Typography>
+        <Typography className="text-secondary">
+          {venue.location}
+        </Typography>
+        <Button 
+          className="btn-primary"
+          onClick={handleSelect}
+        >
+          Book Now - {formatCurrency(venue.price.weekday)}
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+export default VenueCard;
+```
+
+### Page Component Template
+```typescript
+import React from 'react';
+import { Container, Box, Typography } from '@mui/material';
+import { useAppStore } from '@store/store';
+import ComponentName from '@components/ComponentName';
+
+function PageName() {
+  const { stateValue, setState } = useAppStore();
+
+  return (
+    <Container>
+      <Box className="container-padding">
+        <Typography variant="h4" className="text-primary font-bold">
+          Page Title
+        </Typography>
+        <ComponentName 
+          data={stateValue}
+          onAction={setState}
+        />
+      </Box>
+    </Container>
+  );
+}
+
+export default PageName;
+```
+
+## 🎨 STYLING COMMANDMENTS
+
+### Color Usage Rules
+```css
+/* ✅ ALWAYS USE THESE VARIABLES */
+--main-color: #1DB8A6       /* Primary actions, highlights */
+--secondary-color: #FFD700   /* CTA buttons, important actions */
+--accent-color: #FF6B6B     /* Warnings, errors, notifications */
+
+/* ✅ REQUIRED BUTTON CLASSES */
+.btn-primary    /* Yellow background - main CTAs */
+.btn-secondary  /* Transparent - secondary actions */
+.btn-accent     /* Red background - warnings/alerts */
+
+/* ✅ REQUIRED CARD CLASSES */
+.card-glass     /* Glassmorphism effect - main content */
+.card-rounded   /* Standard rounded - simple content */
+```
+
+### Animation Guidelines
+- **ALWAYS** use predefined animation classes:
+  - `.animate-fadeInUp` for page transitions
+  - `.animate-float` for floating elements  
+  - `.animate-pulse` for loading states
+- **NEVER** create custom animations without design approval
+
+## 🔍 CODE REVIEW CHECKLIST (BEFORE SUBMITTING)
+
+### Type Safety ✓
+- [ ] All props have interfaces defined in [src/types/types.ts](mdc:src/types/types.ts)
+- [ ] No `any` types used (or properly documented exceptions)
+- [ ] All imports use `type` prefix for types
+
+### Design System ✓  
+- [ ] Only CSS variables used (no hardcoded values)
+- [ ] Proper design system classes applied
+- [ ] Glassmorphism effects correctly implemented
+
+### Performance ✓
+- [ ] No inline object/array creation in JSX
+- [ ] Event handlers properly memoized with useCallback
+- [ ] Component size under 150 lines
+
+### Architecture ✓
+- [ ] Component in correct directory with proper naming
+- [ ] No business logic mixed with UI
+- [ ] Path aliases used instead of relative imports
+- [ ] Proper separation of concerns
+
+## 🚀 DEVELOPMENT WORKFLOW
+
+### Starting New Feature:
+1. **Research**: Check existing components in [src/components/](mdc:src/components)
+2. **Types**: Define interfaces in [src/types/types.ts](mdc:src/types/types.ts)
+3. **Mockup**: Use data from [src/services/mockData.ts](mdc:src/services/mockData.ts)
+4. **Style**: Apply classes from [src/styles/CSS_CLASSES.md](mdc:src/styles/CSS_CLASSES.md)
+5. **Test**: Verify with existing patterns in [src/App.tsx](mdc:src/App.tsx)
+
+### Quality Gates:
+- **TypeScript**: Zero compilation errors
+- **ESLint**: Zero linting warnings  
+- **Design**: 100% design system compliance
+- **Performance**: No unnecessary re-renders
+- **Naming**: Consistent with project conventions
+
+## 💡 SUCCESS METRICS
+- **Code Quality**: TypeScript strictness + ESLint compliance
+- **Design Consistency**: All elements use design system classes
+- **Performance**: Fast loading + smooth interactions
+- **Maintainability**: Other developers can understand and extend code
+- **User Experience**: Intuitive + accessible interface
+
+Remember: **Excellence is non-negotiable**. Every line of code should meet these standards. When in doubt, follow the existing patterns in the codebase and prioritize consistency over cleverness.
+

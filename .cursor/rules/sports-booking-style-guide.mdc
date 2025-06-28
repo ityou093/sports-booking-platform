@@ -1,0 +1,162 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Sports Booking Platform - Development Rules
+
+You are an expert React/TypeScript architect working on the Sports Booking Platform. Follow these strict development guidelines:
+
+## 🎯 Core Tech Stack
+- **React 19** + **TypeScript** (strict mode)
+- **Vite** + **Material-UI** + **Tailwind CSS**
+- **Zustand** for state management
+- **ESLint** + **Prettier** for code quality
+
+## 🚫 CRITICAL - DO NOT VIOLATE
+1. **NO function declarations** - Always use `const functionName = () => {}`
+2. **NO interface keyword** - Always use `type` instead
+3. **NO any types** - Strict TypeScript enforcement
+4. **NO hardcoded text** - Use [i18n.ts](mdc:src/services/i18n.ts) translations
+5. **NO console.log in production** - Use proper error handling
+
+## ✅ TypeScript Rules
+```typescript
+// ✅ CORRECT - Use type
+type UserProps = {
+  user: User;
+  onEdit: (user: User) => void;
+};
+
+// ✅ CORRECT - Function expression with explicit return type
+const UserCard = ({ user, onEdit }: UserProps): JSX.Element => {
+  // implementation
+};
+
+// ❌ WRONG - interface and function declaration
+interface UserProps { /* ... */ }
+function UserCard(props) { /* ... */ }
+```
+
+## ⚛️ React Component Standards
+- **Function expressions only**: `const Component = () => {}`
+- **Explicit Props types**: `ComponentNameProps`
+- **Boolean props shorthand**: `<Button disabled />` not `<Button disabled={true} />`
+- **JSX.Element return type** for components
+- **useCallback** for event handlers to prevent re-renders
+
+## 📦 Import Order (Auto-sorted by ESLint)
+1. Node.js built-in modules
+2. External libraries (React, MUI, etc.)
+3. Internal modules (../../)
+4. Same-level modules (./)
+5. Type imports (separate `import type`)
+
+## 🏗️ Project Structure Reference
+- **Components**: [src/components/](mdc:src/components) - Reusable UI components
+- **Pages**: [src/pages/](mdc:src/pages) - Page-level components
+- **Services**: [src/services/](mdc:src/services) - API, i18n, mock data
+- **Store**: [src/store/store.ts](mdc:src/store/store.ts) - Zustand state management
+- **Types**: [src/types/types.ts](mdc:src/types/types.ts) - TypeScript definitions
+- **Utils**: [src/utils/](mdc:src/utils) - Helper functions
+
+## 🌍 Internationalization (MANDATORY)
+- Use [getTranslation(selectedLanguage)](mdc:src/services/i18n.ts) for all text
+- Support: Korean (ko), English (en), Filipino (ph)
+- Import from [useAppStore](mdc:src/store/store.ts) for language state
+- Example: `const t = getTranslation(selectedLanguage);`
+
+## 🎨 Styling Approach
+- **Material-UI components** as base
+- **Custom CSS classes** from [CSS_CLASSES.md](mdc:src/styles/CSS_CLASSES.md)
+- **Glassmorphism design** with CSS variables
+- **Color palette**: Primary #1DB8A6, Secondary #FFD700, Accent #FF6B6B
+
+## 🏷️ Naming Conventions
+- **Components**: `PascalCase.tsx` (UserCard.tsx)
+- **Variables/Functions**: `camelCase`
+- **Constants**: `UPPER_SNAKE_CASE`
+- **Booleans**: `is/has/can` prefix
+- **Event handlers**: `handle` prefix
+- **Props types**: `ComponentNameProps`
+
+## ♿ Accessibility Requirements
+- **Always include alt text** for images
+- **aria-label** for interactive elements
+- **Semantic HTML** elements
+- **Keyboard navigation** support
+
+## 🔧 Code Quality Enforcement
+- **Prettier**: 100-char limit, single quotes, trailing commas
+- **ESLint**: No unused imports, explicit return types
+- **TypeScript**: Strict mode, no implicit any
+
+## 📱 Component Template
+```typescript
+type ComponentNameProps = {
+  required: string;
+  optional?: boolean;
+  onAction: (data: string) => void;
+};
+
+const ComponentName = ({ 
+  required, 
+  optional = false, 
+  onAction 
+}: ComponentNameProps): JSX.Element => {
+  const { selectedLanguage } = useAppStore();
+  const t = getTranslation(selectedLanguage);
+
+  const handleClick = useCallback(() => {
+    onAction(required);
+  }, [onAction, required]);
+
+  return (
+    <Card>
+      <Typography variant="h6">
+        {t.section.key}
+      </Typography>
+      <Button onClick={handleClick} aria-label={t.section.buttonLabel}>
+        {t.section.action}
+      </Button>
+    </Card>
+  );
+};
+
+export { ComponentName };
+export type { ComponentNameProps };
+```
+
+## 🎯 Performance Rules
+- **useCallback** for event handlers
+- **useMemo** for expensive calculations
+- **React.memo** for pure components
+- **Lazy loading** for routes
+
+## 🚨 Error Handling Pattern
+```typescript
+const handleAsyncAction = async (): Promise<void> => {
+  try {
+    setIsLoading(true);
+    const result = await apiCall();
+    // handle success
+  } catch (error) {
+    console.error('Action failed:', error);
+    // show user-friendly error
+  } finally {
+    setIsLoading(false);
+  }
+};
+```
+
+## 📋 Before Code Review Checklist
+- [ ] All text uses i18n translations
+- [ ] TypeScript strict compliance
+- [ ] No ESLint/Prettier errors
+- [ ] Accessibility attributes included
+- [ ] Error handling implemented
+- [ ] Performance optimizations applied
+- [ ] Component properly exported with types
+
+**Remember**: Code quality is non-negotiable. Every line should be production-ready, accessible, and internationalized.
+
